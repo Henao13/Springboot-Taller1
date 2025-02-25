@@ -1,0 +1,4 @@
+com\docencia\tutorial\controllers\ProductForm.class
+com\docencia\tutorial\TutorialApplication.class
+com\docencia\tutorial\controllers\HomeController.class
+com\docencia\tutorial\controllers\ProductController.class
