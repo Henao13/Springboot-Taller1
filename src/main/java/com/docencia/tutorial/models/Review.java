@@ -1,10 +1,15 @@
 package com.docencia.tutorial.models;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 @Entity
-@Table(name = "comments")
-public class Comment {
+@Table(name = "reviews")
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +24,9 @@ public class Comment {
     private Book book;
 
     // Constructor vacío para JPA
-    public Comment() {}
+    public Review() {}
 
-    public Comment(String name, String description, Book book) {
+    public Review(String name, String description, Book book) {
         this.name = name;
         this.description = description;
         this.book = book;

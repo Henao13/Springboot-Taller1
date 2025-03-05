@@ -11,14 +11,14 @@
 <div th:replace="~{fragments/header :: header}"></div>
 <div class="container my-4">
     <h2 class="text-center">Editar Reseña</h2>
-    <form th:action="@{/books/{bookId}/comments/{commentId}/update(bookId=${bookId}, commentId=${comment.id})}" method="post">
+    <form th:action="@{/books/{bookId}/reviews/{reviewId}/update(bookId=${bookId}, reviewId=${review.id})}" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Tu Nombre:</label>
-            <input type="text" id="name" name="name" class="form-control" th:value="${comment.name}" required>
+            <input type="text" id="name" name="name" class="form-control" th:value="${review.name}" required>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Reseña:</label>
-            <input type="text" id="description" name="description" class="form-control" th:value="${comment.description}" required>
+            <input type="text" id="description" name="description" class="form-control" th:value="${review.description}" required>
         </div>
         <button type="submit" class="btn btn-success">Guardar Cambios</button>
         <a th:href="@{/books/{bookId}(bookId=${bookId})}" class="btn btn-secondary">Cancelar</a>

@@ -1,8 +1,15 @@
 package com.docencia.tutorial.models;
 
-import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "books")
@@ -17,7 +24,7 @@ public class Book {
     private Integer price;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     // Constructor vacío para JPA
     public Book() {}
@@ -39,7 +46,7 @@ public class Book {
     public Integer getPrice() { return price; }
     public void setPrice(Integer price) { this.price = price; }
 
-    public List<Comment> getComments() { return comments; }
-    public void setComments(List<Comment> comments) { this.comments = comments; }
-    public void addComment(Comment comment) { this.comments.add(comment); }
+    public List<Review> getReviews() { return reviews; }
+    public void setReviews(List<Review> reviews) { this.reviews = reviews; }
+    public void addReview(Review review) { this.reviews.add(review); }
 }

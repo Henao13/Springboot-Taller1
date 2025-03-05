@@ -1,0 +1,179 @@
+
+CLASE RESEÑA(Comment)
+
+
+
+1. REQUISITOS PREVIOS
+
+---
+
+- Tener instalado Docker.
+- Tener instalado Maven (si vas a compilar localmente).
+- Tener instalado Java 17 (o la versión que use tu proyecto).
+
+---
+
+2. CREAR UNA RED DE DOCKER
+
+---
+
+Ejecuta el siguiente comando para crear la red llamada "mynetwork":
+docker network create mynetwork
+
+Nota: en caso de ya estar creada esta red se puede omitir este paso.
+
+Esto permite que distintos contenedores (MySQL, phpMyAdmin, etc.) se comuniquen fácilmente.
+
+---
+
+3. EJECUTAR EL CONTENEDOR DE MySQL
+
+
+Ejecuta el siguiente comando para levantar un contenedor de MySQL:
+
+```
+docker run -d \
+  --name mysql-container \
+  --network mynetwork \
+  -e MYSQL_ROOT_PASSWORD=tu_password \
+  -p 3308:3306 \
+  mysql:latest
+```
+
+Explicación:
+
+- \--name mysql-container: Le damos un nombre al contenedor.
+- \--network mynetwork: Lo conectamos a la red "mynetwork" (creada en el paso anterior).
+- -e MYSQL\_ROOT\_PASSWORD=tu\_password: Variable de entorno para asignar la contraseña de root.
+- -p 3308:3306: Mapea el puerto interno 3306 de MySQL al 3308 de tu host local.
+  Esto quiere decir que accederás a MySQL desde tu máquina en localhost:3308
+
+---
+
+4. EJECUTAR phpMyAdmin (OPCIONAL PERO ÚTIL)
+
+---
+
+Para administrar la base de datos gráficamente, ejecuta phpMyAdmin:
+
+```
+docker run -d \
+  --name phpmyadmin-container \
+  --network mynetwork \
+  -e PMA_HOST=mysql-container \
+  -e PMA_PORT=3306 \
+  -p 8081:80 \
+  phpmyadmin:latest
+```
+
+Explicación:
+
+- \--name phpmyadmin-container: Nombre del contenedor de phpMyAdmin.
+- \--network mynetwork: Debe ser la misma red para que se comunique con MySQL.
+- -e PMA\_HOST=mysql-container: Host interno (nombre del contenedor MySQL).
+- -e PMA\_PORT=3306: Puerto interno de MySQL dentro de esa red.
+- -p 8081:80: Expone phpMyAdmin en el puerto 8081 de tu máquina local.
+
+---
+
+5. ACCEDER A phpMyAdmin
+
+---
+
+Abre tu navegador en:
+[http://localhost:8081](http://localhost:8081)
+
+Inicia sesión con las credenciales de MySQL:
+\- Usuario: root
+\- Contraseña: la que pasaste en el contenedor MySQL (tu\_password)
+
+---
+
+6. CREAR LA BASE DE DATOS "springcourse"
+
+
+Una vez dentro de phpMyAdmin:
+
+- Haz clic en la pestaña "Databases"
+- En el campo de nombre de la base, escribe "springcourse" (o el nombre que prefieras)
+- Presiona el botón "Create"
+
+Es posible hacer esta creación de la base de datos en otro cliente distinto como por ejemplo MySQL Workbench. Lo importante es tener claro el puerto utilizado.
+
+(En caso de usar otro nombre de base de datos, tendrás que reflejarlo en application.properties.)
+
+---
+
+7. CONFIGURAR application.properties DE SPRING BOOT
+
+---
+
+En tu archivo src/main/resources/application.properties, usa la siguiente configuración:
+
+```
+spring.datasource.url=jdbc:mysql://localhost:3308/springcourse
+
+spring.datasource.username=root
+spring.datasource.password=tu_password
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Manejo del esquema de la base de datos
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+```
+
+Notas:
+
+- "localhost" y puerto "3308" coinciden con el mapeo que hicimos (-p 3308:3306).
+- "springcourse" es la base de datos que creaste en phpMyAdmin.
+- "tu\_password" debe ser la misma contraseña que pusiste en el contenedor MySQL.
+
+---
+
+8. COMPILAR Y EJECUTAR LA APLICACIÓN SPRING BOOT (LOCAL)
+
+---
+1. Asegurate que la base de datos esté corriendo en Docker.
+
+2. Ejecuta la aplicación:
+   mvn spring-boot:run
+
+3. Verifica la consola para asegurarte de que no haya errores de conexión.
+
+
+---
+
+9. ACCEDER A LA APLICACIÓN
+
+---
+
+Por defecto, la aplicación se publicará en:
+[http://localhost:8080](http://localhost:8080)
+
+La ruta inicial dependerá de tus controladores (p.ej. /, /index, /login, etc.)
+
+---
+
+10. NOTAS ADICIONALES
+
+---
+
+- Si deseas usar MySQL Workbench, DBeaver u otra herramienta en lugar de phpMyAdmin,
+  conéctate a "localhost" y el puerto "3308" (o el que hayas mapeado),
+  usuario "root" y la contraseña que configures.
+- Ajusta el archivo application.properties si cambias de base de datos o de puertos.
+- Asegúrate de que tu contenedor mysql-container se ejecute antes de iniciar Spring Boot.
+
+---
+
+11. DENTRO DE LA APP
+
+---
+
+-Para poder probar el CRUD de Reviews deberás irte a la sección de Book que verás en la Navbar
+- Una vez allí, dirígete al único libro disponible y esto te abrirá los detalles del libro, dónde podras escribir tu reseña.
+- Una vez puesta la reseña, aparecerá una opción de editar o borrar, al darle al botón de borrar, la reseña se eliminará de la base de datos, al darle editar te redirigirá a una nueva vista, donde podrás editar la reseña y guardarla al darle Guardar cambios.
+- La reseña tendrá un número aleatorio de likes simulando la entidad "Likes" de nuestro diagrama de clases.
+- Siempre se cargará el libro "El principito" a la base de datos una vez iniciada la página. 
+
+
